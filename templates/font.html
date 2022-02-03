@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>web note</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='bootstrap.min.css') }}">
+    <script src="{{ url_for('static',filename='jquery.min.js') }}"></script>
+    <script src="{{ url_for('static',filename='bootstrap.min.js') }}"></script>
+    <script>
+        function get_auth() {
+            return '/' + "{{ password }}"
+        }
+
+        function redirect() {
+            let note = document.getElementById('note_input').value
+            let append = '?note=' + encodeURI(note)
+            window.location.href = get_auth() + append
+        }
+
+        document.onkeydown = function (e) {
+            let theEvent = window.event || e;
+            let code = theEvent.keyCode || theEvent.which;
+            if (code === 13) {
+                document.getElementById('note_submit').click()
+            }
+        }
+
+        function del(date) {
+            let append = '?del_date=' + encodeURI(date)
+            window.location.href = get_auth() + append
+
+        }
+    </script>
+    <style type="text/css">
+        /* 设备竖屏时调用该段css代码 */
+        @media all and (orientation: portrait) {
+            body {
+                font-size: 500% !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>note</th>
+        <th>time</th>
+        <th>operator</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><label>
+            <input id="note_input" type="text" name="note" autofocus="autofocus">
+        </label></td>
+        <td></td>
+        <td>
+            <button id="note_submit" onclick="redirect()">添加</button>
+        </td>
+    </tr>
+    {% for row in rows %}
+        <tr>
+            <td>{{ row[0]|safe }}</td>
+            <td>{{ row[1] }}</td>
+            <td>
+                <button onclick="del(this.value)" value="{{ row[1] }}">delete</button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="/{{ password }}?all">查看所有</a>
+</body>
+</html>
